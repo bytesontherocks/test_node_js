@@ -15,10 +15,14 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+  io.emit('broadcast message', 'Benvingut al xat!');
+
   socket.on('chat message', (msg) => {
     console.log('message: ' + msg);
+    io.emit('chat message', msg);
   });
 });
+
 server.listen(3000, () => {
   console.log('server running at http://localhost:3000');
 });
