@@ -1,5 +1,7 @@
 # Testing Nodejs
 
+Following https://socket.io/docs/v4/tutorial/api-overview + chatgpt insides
+
 ## Basic checks
 
 '''

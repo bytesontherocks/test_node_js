@@ -15,11 +15,13 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+  // broadcast
   io.emit('broadcast message', 'Benvingut al xat!');
 
   socket.on('chat message', (msg) => {
     console.log('message: ' + msg);
-    io.emit('chat message', msg);
+    // socket specific
+    socket.emit('chat message', msg);
   });
 });
 
