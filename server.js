@@ -8,15 +8,14 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
-});
+app.use(express.static('public'));
 
 io.on('connection', (socket) => {
   // broadcast
-  io.emit('broadcast message', 'Benvingut al xat!');
+  io.emit(
+    'broadcast message',
+    'Benvingut al xat - un nou client sha connectat',
+  );
 
   socket.on('chat message', (msg) => {
     console.log('message: ' + msg);
