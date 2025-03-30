@@ -20,6 +20,7 @@ npm -v
 '''
 npm install express@4
 npm fund
+npm install mqtt
 '''
 
 ## To run the app

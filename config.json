@@ -1,0 +1,5 @@
+{
+  "mqttBroker": "mqtt://localhost:1883",
+  "mqttTopicPattern": "/([a-zA-Z0-9_]+)\/([a-zA-Z0-9_]+)\/(.+)$/",
+  "serverPort": 3000
+}

@@ -1,27 +1,46 @@
+// client.js
+
+// Connect to the Socket.IO server
 const socket = io();
 
-const form = document.getElementById('form');
-const input = document.getElementById('input');
-const messages = document.getElementById('messages');
+// This function will update or create a table for a given device
+function updateDeviceTable(deviceId, topic, value) {
+  let deviceTable = document.getElementById(deviceId);
 
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (input.value) {
-    socket.emit('chat message', input.value);
-    input.value = '';
+  // Create the table for the device if it doesn't exist
+  if (!deviceTable) {
+    deviceTable = document.createElement('table');
+    deviceTable.id = deviceId;
+    deviceTable.classList.add('device-table');
+
+    // Add a header row with device name
+    const headerRow = document.createElement('tr');
+    const headerCell = document.createElement('th');
+    headerCell.colSpan = 2;
+    headerCell.textContent = `Device: ${deviceId}`;
+    headerRow.appendChild(headerCell);
+    deviceTable.appendChild(headerRow);
+
+    // Append the table to the page
+    document.getElementById('device-tables').appendChild(deviceTable);
   }
-});
 
-socket.on('chat message', (msg) => {
-  const item = document.createElement('li');
-  item.textContent = msg;
-  messages.appendChild(item);
-  window.scrollTo(0, document.body.scrollHeight);
-});
+  // Add a new row with the topic and value for the device
+  const newRow = document.createElement('tr');
+  const topicCell = document.createElement('td');
+  const valueCell = document.createElement('td');
 
-socket.on('broadcast message', (msg) => {
-  const item = document.createElement('li');
-  item.textContent = msg;
-  messages.appendChild(item);
-  window.scrollTo(0, document.body.scrollTop);
+  topicCell.textContent = topic;
+  valueCell.textContent = value;
+
+  newRow.appendChild(topicCell);
+  newRow.appendChild(valueCell);
+
+  deviceTable.appendChild(newRow);
+}
+
+// Listen for device updates from the server via Socket.IO
+socket.on('device update', (data) => {
+  const { deviceId, topic, value } = data;
+  updateDeviceTable(deviceId, topic, value);
 });

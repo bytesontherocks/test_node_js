@@ -1,29 +1,27 @@
+// server.js
 import express from 'express';
-import { createServer } from 'node:http';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-import { Server } from 'socket.io';
+import http from 'http';
+import fs from 'fs';
+import { connectMqtt, getDevicesData } from './mqtt_client.js';
+import { setupSocketServer } from './socket_server.js';
 
+const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+// Set up the Express app
 const app = express();
-const server = createServer(app);
-const io = new Server(server);
+const server = http.createServer(app);
 
+// Serve static files (index.html, client.js) from the 'public' folder
 app.use(express.static('public'));
 
-io.on('connection', (socket) => {
-  // broadcast
-  io.emit(
-    'broadcast message',
-    'Benvingut al xat - un nou client sha connectat',
-  );
+// Set up Socket.IO server and get broadcast function
+const { io, broadcastDeviceUpdate } = setupSocketServer(
+  server,
+  getDevicesData(),
+);
 
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    // socket specific
-    socket.emit('chat message', msg);
-  });
-});
+// Connect MQTT and pass in socket emitter
+connectMqtt(broadcastDeviceUpdate);
 
-server.listen(3000, () => {
-  console.log('server running at http://localhost:3000');
+server.listen(config.serverPort, () => {
+  console.log(`🚀 Server running on port ${config.serverPort}`);
 });
